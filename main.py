@@ -4,7 +4,7 @@ from browser.login import login
 from browser.courses import open_my_courses, get_courses
 from browser.recordings import open_recordings
 from browser.adobe import (
-    open_in_browser,
+    open_adobe,
     wait_for_player,
     play_recording
 )
@@ -41,29 +41,30 @@ def main():
                     f"▶ {recording['date']} | "
                     f"{recording['duration']}"
                 )
+                for recording in recordings:
+
+                    archive_page.goto(recording["url"])
+
+                    archive_page.wait_for_load_state()
+
+                    adobe_page = open_adobe(archive_page)
+
+                    wait_for_player(adobe_page)
+
+                    play_recording(adobe_page)
+
+                    input("Press Enter for next recording...")
+
 
                 archive_page.goto(recording["url"])
 
                 archive_page.wait_for_load_state()
+
+        
         input("\nPress Enter to exit...")
 
         context.close()
         browser.close()
-
-        for recording in recordings:
-
-            archive_page.goto(recording["url"])
-
-            archive_page.wait_for_load_state()
-
-            adobe_page = open_in_browser(archive_page)
-
-            wait_for_player(adobe_page)
-
-            play_recording(adobe_page)
-
-            input("Press Enter for next recording...")
-
 
 if __name__ == "__main__":
     main()

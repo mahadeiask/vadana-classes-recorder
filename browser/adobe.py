@@ -1,45 +1,20 @@
 from playwright.sync_api import TimeoutError
 
 
-def open_in_browser(recording_page):
+def open_adobe(recording_page):
     print("🌐 Waiting for Adobe page...")
 
     recording_page.wait_for_load_state("domcontentloaded")
 
-    # بستن پنجرهٔ باز کردن برنامه
-    try:
-        cancel_button = recording_page.locator(
-            'button:has-text("Cancel")'
-        )
+    # کمی صبر برای نمایش دیالوگ
+    recording_page.wait_for_timeout(3000)
 
-        cancel_button.wait_for(timeout=5000)
+    # فشردن Enter
+    recording_page.keyboard.press("Enter")
 
-        cancel_button.click()
+    print("⌨️ Enter pressed")
 
-        print("❌ Open app popup closed")
-
-    except TimeoutError:
-        print("ℹ️ No popup found")
-
-    # کلیک روی Open in browser
-    open_button = recording_page.locator(
-        'a:has-text("Open in browser")'
-    )
-
-    open_button.wait_for(timeout=10000)
-
-    with recording_page.expect_popup() as popup_info:
-        open_button.click()
-
-    adobe_page = popup_info.value
-
-    adobe_page.wait_for_load_state()
-
-    print("✅ Adobe opened in browser")
-
-    return adobe_page
-
-
+    return recording_page
 def wait_for_player(adobe_page):
     print("⏳ Waiting for player...")
 
@@ -49,10 +24,10 @@ def wait_for_player(adobe_page):
             timeout=30000
         )
 
-        return True
+        print("✅ Player loaded")
 
     except TimeoutError:
-        print("🔄 Refreshing page...")
+        print("🔄 Timeout, refreshing page...")
 
         adobe_page.reload()
 
@@ -61,14 +36,11 @@ def wait_for_player(adobe_page):
             timeout=30000
         )
 
-        return True
-    
-def play_recording(adobe_page):
-    play_button = adobe_page.locator(
-        "#play-recording-shim-button"
-    )
+        print("✅ Player loaded after refresh")
 
-    play_button.click()
+def play_recording(adobe_page):
+    adobe_page.locator(
+        "#play-recording-shim-button"
+    ).click()
 
     print("▶ Recording started")
-
