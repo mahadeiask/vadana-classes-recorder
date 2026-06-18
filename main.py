@@ -16,27 +16,34 @@ def main():
 
         page = context.new_page()
 
-        page = context.new_page()
-
         login(page)
 
         open_my_courses(page)
 
         courses = get_courses(page)
+    for course in courses:
+        print(f"\n📘 {course['title']}")
 
-        for course in courses:
-            print(f"\n📘 {course['title']}")
+        archive_page, recordings = open_recordings(
+            page,
+            course["url"]
+        )
 
-            recordings = open_recordings(
-                page,
-                course["url"]
-            )
+        print(f"🎬 {len(recordings)} recordings found")
 
-            print(f"🎬 {len(recordings)} recordings found")
+    for recording in recordings:
+        print(
+            f"▶ {recording['date']} | "
+            f"{recording['duration']}"
+        )
 
+        archive_page.goto(recording["url"])
+
+        archive_page.wait_for_load_state()
         input("\nPress Enter to exit...")
 
         context.close()
+        browser.close()
 
 
 if __name__ == "__main__":

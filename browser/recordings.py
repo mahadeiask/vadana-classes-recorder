@@ -39,4 +39,4 @@ def open_recordings(page, course_url):
             "url": row.locator("td.c3 a").get_attribute("href")
         })
 
-    return recordings
+    return page2, recordings
