@@ -1,5 +1,5 @@
-USERNAME = "403553065"
-PASSWORD = "403553065"
+USERNAME = ""
+PASSWORD = ""
 
 URL = "https://vadana21.ec.iau.ir/p/4042"
 

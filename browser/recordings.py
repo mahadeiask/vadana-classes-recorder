@@ -8,7 +8,7 @@ def open_recordings(page, course_url):
     )
 
     if entry_link.count() == 0:
-        return []
+        return None, []
 
     with page.expect_popup() as popup_info:
         entry_link.first.click()
