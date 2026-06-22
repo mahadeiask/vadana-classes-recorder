@@ -26,6 +26,7 @@ def main():
         open_my_courses(page)
 
         courses = get_courses(page)
+
         for course in courses:
             print(f"\n📘 {course['title']}")
 
@@ -38,22 +39,25 @@ def main():
 
             for recording in recordings:
                 print(
+                    
                     f"▶ {recording['date']} | "
                     f"{recording['duration']}"
                 )
-                for recording in recordings:
 
-                    archive_page.goto(recording["url"])
+                archive_page.goto(
+                    recording["url"],
+                    wait_until="domcontentloaded",
+                    timeout=120000
+                    )
 
-                    archive_page.wait_for_load_state()
+                adobe_page = open_adobe(archive_page)
 
-                    adobe_page = open_adobe(archive_page)
+                wait_for_player(adobe_page)
 
-                    wait_for_player(adobe_page)
+                play_recording(adobe_page)
 
-                    play_recording(adobe_page)
-
-                    input("Press Enter for next recording...")
+                input("Press Enter for next recording...")
+                archive_page.close()
 
 
                 archive_page.goto(recording["url"])
