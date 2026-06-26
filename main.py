@@ -1,12 +1,19 @@
 from playwright.sync_api import sync_playwright
-
+import time
 from browser.login import login
 from browser.courses import open_my_courses, get_courses
 from browser.recordings import open_recordings
 from browser.adobe import (
     open_adobe,
     wait_for_player,
-    play_recording
+    play_recording,
+    get_last_chat_message,
+    should_stop_recording,
+
+)
+from recorder.obs import (
+    stop_recording,
+
 )
 
 
@@ -69,6 +76,23 @@ def main():
 
         context.close()
         browser.close()
+    
+    last_message = None
+
+    while True:
+
+        message = get_last_chat_message(adobe_page)
+
+        if message != last_message:
+            print(message)
+
+            if should_stop_recording(message):
+                stop_recording()
+                break
+
+            last_message = message
+
+        time.sleep(5)
 
 if __name__ == "__main__":
     main()
