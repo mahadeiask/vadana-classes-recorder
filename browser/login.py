@@ -13,6 +13,6 @@ def login(page):
 
         page.click('button[type="button"], input[type="loginBtn"]')
 
-        page.wait_for_timeout(5000)
+        page.wait_for_timeout(10000)
 
     print("✅ Login completed")

@@ -1,10 +1,11 @@
+import traceback
 from playwright.sync_api import TimeoutError
 import pyautogui
 import time
 from recorder.obs import (
     start_recording,
     )
-from ..config import END_KEYWORDS
+from config import END_KEYWORDS
 
 
 def open_adobe(recording_page):
@@ -75,7 +76,7 @@ def play_recording(adobe_page):
     adobe_page.wait_for_timeout(500)
     adobe_page.keyboard.press("Tab")
 
-    adobe_page.wait_for_timeout(20000)
+    adobe_page.wait_for_timeout(30000)
     
     adobe_page.keyboard.press("Tab")
 
@@ -84,38 +85,46 @@ def play_recording(adobe_page):
     adobe_page.keyboard.press("Enter")
 
     print("▶ Recording started")
-    start_recording()
 
+
+import traceback
+
+import traceback
 
 def get_last_chat_message(adobe_page):
     try:
-        adobe_page.wait_for_selector(
-            "#chatContentArea .chatIndividualMessage",
-            timeout=5000
-        )
+        # صبر کن iframe لود شود
+        adobe_page.wait_for_selector("#html-meeting-frame", timeout=10000)
 
-        messages = adobe_page.locator(
-            "#chatContentArea .chatIndividualMessage"
-        )
+        # وارد iframe شو
+        frame = adobe_page.frame_locator("#html-meeting-frame")
 
+        # پیام‌ها
+        messages = frame.locator("#chatIndividualMessage")
+
+        # اگر هنوز پیامی نیست
+        if messages.count() == 0:
+            return None
+
+        # آخرین پیام
         last = messages.last
 
-        sender = last.locator(
-            "#chatMessageSender"
-        ).inner_text().strip()
+        sender = last.locator("#chatMessageSender").text_content()
+        text = last.locator("#chatIndividualMessageContent").text_content()
 
-        text = last.locator(
-            "#chatIndividualMessageContent"
-        ).inner_text().strip()
+        sender = sender.strip() if sender else ""
+        text = text.strip() if text else ""
 
         return {
             "sender": sender,
             "text": text
         }
 
-    except TimeoutError:
+    except Exception as e:
+        print(f"ERROR: {type(e).__name__}")
+        print(e)
+        traceback.print_exc()
         return None
-    
 def should_stop_recording(message):
     if message is None:
         return False

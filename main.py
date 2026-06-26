@@ -8,13 +8,13 @@ from browser.adobe import (
     wait_for_player,
     play_recording,
     get_last_chat_message,
-    should_stop_recording,
+    should_stop_recording
 
-)
+    )
 from recorder.obs import (
     stop_recording,
-
-)
+    start_recording,
+    )
 
 
 def main():
@@ -62,37 +62,38 @@ def main():
                 wait_for_player(adobe_page)
 
                 play_recording(adobe_page)
+                start_recording()
 
-                input("Press Enter for next recording...")
+                last_message = None
+
+                while True:
+                    
+                    message = get_last_chat_message(adobe_page)
+                    print(message)
+
+                    if message != last_message:
+                        print(message)
+
+                        if should_stop_recording(message):
+                            stop_recording()
+                            break
+
+                        last_message = message
+
+                    time.sleep(5)
+
                 archive_page.close()
 
 
                 archive_page.goto(recording["url"])
 
                 archive_page.wait_for_load_state()
-
         
         input("\nPress Enter to exit...")
 
-        context.close()
-        browser.close()
-    
-    last_message = None
 
-    while True:
-
-        message = get_last_chat_message(adobe_page)
-
-        if message != last_message:
-            print(message)
-
-            if should_stop_recording(message):
-                stop_recording()
-                break
-
-            last_message = message
-
-        time.sleep(5)
+    context.close()
+    browser.close()
 
 if __name__ == "__main__":
     main()

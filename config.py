@@ -1,5 +1,5 @@
-USERNAME = "403553065"
-PASSWORD = "403553065"
+USERNAME = ""
+PASSWORD = ""
 
 URL = "https://vadana21.ec.iau.ir/p/4042"
 
@@ -14,8 +14,9 @@ SKIP_DURATIONS = {
     "12:00:00"
 }
 
-END_KEYWORDS = [
+END_KEYWORDS = {
     "خسته نباشید",
+    "خسته نباشید استاد",
     "خداحافظ",
     "خدانگهدار",
     "پایان کلاس",
@@ -25,4 +26,4 @@ END_KEYWORDS = [
     "KHASTE NABASHID",
     "Khaste nabashid",
     "Khaste Nabashid"
-]
+}
